@@ -363,19 +363,42 @@ void search(nodejetski*head, string pat)
 void menuSearch(){
     int c, x, idx;
     string xs;
-
     int pilih;
+
+    while(true) {
+    setColor(3);
     cout << "========================================" << endl;
+    setColor(10);
     cout << "               CARI DATA                " << endl;
+    setColor(3);
     cout << "========================================" << endl;
-    cout << " 1. Harga JetSki (Fibonacci Search)     " << endl;
+    setColor(10);
+    cout << " 1. Id JetSki (Fibonacci Search)        " << endl;
     cout << " 2. Harga JetSki (Jump Search)          " << endl;
     cout << " 3. Merk JetSki (Boyer-Moore Search)    " << endl;
     cout << " 0. Kembali                             " << endl;
+    setColor(3);
     cout << "========================================" << endl;
+    setColor(3);
     cout << "Masukkan pilihan anda : ";
-    cin >> pilih;
-    cin.ignore();
+    setColor(6);
+
+    if (cin >> noskipws >> pilih && pilih >= 0 && pilih <= 8){
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        break;
+     }else{
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Mengabaikan karakter yang tersisa dalam buffer
+        system("cls");
+        setColor(4);
+        cout << "========================================" << endl;
+        cout << "           PILIHAN TIDAK VALID          " << endl;
+        cout << "========================================" << endl;
+        sleep_for(seconds(2));
+        system("cls");
+        }
+    }
 
     switch (pilih){
         case 1:
@@ -487,6 +510,148 @@ void menuSearch(){
     }
 }
 
+void swapJetSki(jetski& a, jetski& b) {
+    jetski temp = a;
+    a = b;
+    b = temp;
+}
+
+//QUICK SORT
+nodejetski* partition(nodejetski* low, nodejetski* high) {
+    long pivot = high->ski.harga;
+    nodejetski* i = low->prev;
+
+    for (nodejetski* j = low; j != high; j = j->next) {
+        if (j->ski.harga >= pivot) {
+            i = (i == nullptr) ? low : i->next;
+            swapJetSki(i->ski, j->ski);
+        }
+    }
+    i = (i == nullptr) ? low : i->next;
+    swapJetSki(i->ski, high->ski);
+    return i;
+}
+
+void quickSort(nodejetski* low, nodejetski* high) {
+    if (high != nullptr && low != high && low != high->next) {
+        nodejetski* pi = partition(low, high);
+        quickSort(low, pi->prev);
+        quickSort(pi->next, high);
+    }
+}
+
+void quickSortDesc() {
+    if (head == nullptr) return;
+    quickSort(head, last);
+}
+
+//SHELL SORT
+void shellSort(nodejetski* head) {
+    int n = 0;
+    nodejetski* temp = head;
+
+    while (temp != nullptr) {
+        n++;
+        temp = temp->next;
+    }
+
+    jetski* arr = new jetski[n];
+    temp = head;
+    for (int i = 0; i < n; i++) {
+        arr[i] = temp->ski;
+        temp = temp->next;
+    }
+
+    for (int gap = n / 2; gap > 0; gap /= 2) {
+        for (int i = gap; i < n; i++) {
+            jetski temp = arr[i];
+            int j;
+            for (j = i; j >= gap && arr[j - gap].id > temp.id; j -= gap) {
+                arr[j] = arr[j - gap];
+            }
+            arr[j] = temp;
+        }
+    }
+
+    temp = head;
+    for (int i = 0; i < n; i++) {
+        temp->ski = arr[i];
+        temp = temp->next;
+    }
+
+    delete[] arr;
+}
+
+void menuSorting(){
+    int pilih;
+
+    while (true) {
+    setColor(3);
+    cout << "========================================" << endl;
+    setColor(10);
+    cout << "               LIHAT DATA               " << endl;
+    setColor(3);
+    cout << "========================================" << endl;
+    setColor(10);
+    cout << " 1. id JetSki (Shell Sort)              " << endl;
+    cout << " 2. Harga JetSki (Quick Sort)           " << endl;
+    cout << " 0. Kembali                             " << endl;
+    setColor(3);
+    cout << "========================================" << endl;
+    setColor(10);
+    cout << "Masukkan pilihan anda : ";
+    setColor(6);
+
+    if (cin >> noskipws >> pilih && pilih >= 0 && pilih <= 8){
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n');
+        break;
+     }else{
+        cin.clear();
+        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Mengabaikan karakter yang tersisa dalam buffer
+        system("cls");
+        setColor(4);
+        cout << "========================================" << endl;
+        cout << "           PILIHAN TIDAK VALID          " << endl;
+        cout << "========================================" << endl;
+        sleep_for(seconds(2));
+        system("cls");
+        }
+    }
+
+    switch (pilih){
+        case 1:
+            system("cls");
+            setColor(7);
+            cout << "Loading..." << endl;
+            sleep_for(seconds(2));
+            system("cls");
+            shellSort(head);
+            lihatData ();
+            cout << "\n Tekan Enter untuk melanjutkan...";
+            cin.get();
+            break;
+        case 2:
+            system("cls");
+            setColor(7);
+            cout << "Loading..." << endl;
+            sleep_for(seconds(2));
+            system("cls");
+            quickSortDesc();
+            lihatData ();
+            cout << "\n Tekan Enter untuk melanjutkan...";
+            cin.get();
+            break;
+        case 0:
+            system("cls");
+            setColor(7);
+            cout << "Loading..." << endl;
+            sleep_for(seconds(2));
+            system("cls");
+            break;
+    }
+}
+
 int main() {
     int pilih;
     jetski ski;
@@ -504,7 +669,7 @@ int main() {
         cout << "  1. Tambah JetSki                      " << endl;
         cout << "  2. Lihat Jetski                       " << endl;
         cout << "  3. Ubah JetSki                        " << endl;
-        cout << "  4. Hapus JetSki                      " << endl;
+        cout << "  4. Hapus JetSki                       " << endl;
         cout << "  5. Cari JetSki                        " << endl;
         cout << "  6. Lihat Antrian JetSki               " << endl;
         cout << "  7. Layani Antrian JetSki              " << endl;
@@ -549,7 +714,7 @@ int main() {
             cout << "Loading..." << endl;
             sleep_for(seconds(2));
             system("cls");
-            lihatData();
+            menuSorting();
             break;
         case 3:
             system("cls");
