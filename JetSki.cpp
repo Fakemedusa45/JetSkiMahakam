@@ -3,7 +3,6 @@
 #include <windows.h>
 #include <chrono>
 #include <thread>
-
 #include <bits/stdc++.h>
 #include <math.h>
 
@@ -27,44 +26,44 @@ struct jetski {
 
 struct penyewa {
     string nama;
-    string password;
+    string no_hp;
+    string alamat;
+    string paket;
+    int durasi;
+    string hari;
+    string jam;
     string merk;
 };
 
 struct nodejetski {
     jetski ski;
-    nodejetski*next;
-    nodejetski*prev;
+    nodejetski* next;
+    nodejetski* prev;
 };
 
 struct nodepenyewa {
     penyewa user;
-    nodepenyewa*next;
-    nodepenyewa*prev;
+    nodepenyewa* next;
+    nodepenyewa* prev;
 };
 
-struct nodejetski*head=NULL;
-struct nodejetski*last=NULL;
+struct nodejetski* head = NULL;
+struct nodejetski* last = NULL;
+struct nodepenyewa* headpenyewa = NULL;
+struct nodepenyewa* lastpenyewa = NULL;
 
-struct nodepenyewa*headpenyewa;
-struct nodepenyewa*lastpenyewa;
-
-
-bool kosong(){
-    return head==NULL;
+bool kosong() {
+    return head == NULL;
 }
-
 
 bool isQueueEmpty() {
     return headpenyewa == nullptr;
 }
 
-int length(nodejetski *head)
-{
+int length(nodejetski* head) {
     int count = 0;
-    nodejetski*temp = head;
-    while (temp != NULL)
-    {
+    nodejetski* temp = head;
+    while (temp != NULL) {
         count++;
         temp = temp->next;
     }
@@ -78,47 +77,46 @@ void setColor(int color) {
     SetConsoleTextAttribute(GetStdHandle(STD_OUTPUT_HANDLE), color);
 }
 
-void lihatData(){
+void lihatData() {
     setColor(3);
     cout << "========================================" << endl;
-    setColor(10);    cout << "               DATA DRONE               " << endl;
+    setColor(10);
+    cout << "               DATA JETSKI              " << endl;
     setColor(3);
     cout << "========================================" << endl;
-    if(kosong()){
+    if (kosong()) {
         setColor(4);
-        cout << "Data kosong, tidak ada yang bisa ditampilkan"<<endl;
+        cout << "Data kosong, tidak ada yang bisa ditampilkan" << endl;
         setColor(3);
         cout << "========================================" << endl;
         cout << "\n Tekan Enter untuk melanjutkan...";
         cin.get();
         return;
-    }
-    else{
+    } else {
         int hitung = 1;
-        nodejetski*temp=head;
+        nodejetski* temp = head;
         while (temp != NULL) {
-            cout << "data ke-" << hitung << endl;
-            cout << "data ke-" << temp->ski.id << endl;
-            cout << "Merk JetSki : " << temp->ski.merk << endl;
-            cout << "Harga Jetski : " << temp->ski.harga << endl;
-            cout << "Status jetSki : " << temp->ski.status << endl;
-            cout << "========================================" << endl;
-
-
+            if (temp->ski.status == "Tidak Disewa") {
+                cout << "data ke-" << hitung << endl;
+                cout << "id jetski : " << temp->ski.id << endl;
+                cout << "Merk JetSki : " << temp->ski.merk << endl;
+                cout << "Harga Jetski : " << temp->ski.harga << endl;
+                cout << "Status jetSki : " << temp->ski.status << endl;
+                cout << "========================================" << endl;
+                hitung += 1;
+            }
             temp = temp->next;
-            hitung += 1;
         }
     }
 }
 
-int tambahJetSki(jetski ski, int& nextId){
-
+int tambahJetSki(jetski ski, int& nextId) {
     cout << "========================================" << endl;
-    cout << "           TAMBAH DATA DRONE            " << endl;
+    cout << "           TAMBAH DATA JETSKI            " << endl;
     cout << "========================================" << endl;
-    cout << "Masukkan merk JetSki : ";
-    getline (cin, ski.merk);
-    cout << "Masukkan harga JetSki : ";
+    cout << "Masukkan merk jetski : ";
+    getline(cin, ski.merk);
+    cout << "Masukkan harga jetski : ";
     cin >> ski.harga;
 
     //set status jetski secara statis
@@ -126,29 +124,27 @@ int tambahJetSki(jetski ski, int& nextId){
     //set id jetski
     ski.id = nextId++;
 
+    nodejetski* baru = new nodejetski;
+    baru->ski = ski;
+    baru->next = NULL;
+
     if (kosong()) {
-        nodejetski*baru=new nodejetski;
-        baru->ski=ski;
-        baru->next=NULL;
-        baru->prev=NULL;
-        head=baru;
-        last=baru;
-    } else{
-    nodejetski*baru=new nodejetski;
-    baru->ski=ski;
-    baru->prev=last;
-    last->next=baru;
-    baru->next=NULL;
-    last=baru;
+        baru->prev = NULL;
+        head = baru;
+        last = baru;
+    } else {
+        baru->prev = last;
+        last->next = baru;
+        last = baru;
     }
 
     return 0;
 }
 
-void hapusjetSki (nodejetski *&head) {
+void hapusjetSki(nodejetski*& head) {
     string merk;
     lihatData();
-    nodejetski *temp = head;
+    nodejetski* temp = head;
 
     if (temp == nullptr) {
         cout << "Data tidak ditemukan..." << endl;
@@ -157,9 +153,9 @@ void hapusjetSki (nodejetski *&head) {
     }
 
     cout << "========================================" << endl;
-    cout << "            HAPUS DATA DRONE            " << endl;
+    cout << "            HAPUS DATA JETSKI            " << endl;
     cout << "========================================" << endl;
-    cout << "Masukkan merk drone yang ingin dihapus : ";
+    cout << "Masukkan merk jetski yang ingin dihapus : ";
     getline(cin, merk);
 
     if (temp->ski.merk == merk) {
@@ -193,12 +189,13 @@ void hapusjetSki (nodejetski *&head) {
     cout << "Data dengan merk " << merk << " berhasil dihapus." << endl;
 }
 
-void ubahJetSki (nodejetski *head){
+void ubahJetSki(nodejetski* head) {
     int ubah;
     lihatData();
-    nodejetski *temp = head;
+    nodejetski* temp = head;
 
     if (temp == nullptr) {
+        cout << "Data tidak ditemukan..." << endl;
         return;
     }
 
@@ -207,108 +204,95 @@ void ubahJetSki (nodejetski *head){
     cout << "========================================" << endl;
     cout << "Masukkan id jetski yang ingin diubah : ";
     cin >> ubah;
+    cin.ignore();
     cout << endl;
 
-    while(temp != nullptr && temp->ski.id != ubah){
+    while (temp != nullptr && temp->ski.id != ubah) {
         temp = temp->next;
     }
 
-    if (temp == nullptr){
+    if (temp == nullptr) {
         cout << "Data tidak ditemukan..." << endl;
         cout << "========================================" << endl;
         return;
     }
 
-
-    cout << "Masukkan merk drone baru: ";
+    cout << "Masukkan merk jetski baru: ";
     getline(cin, temp->ski.merk);
-    cout << "Masukkan harga drone baru: ";
+    cout << "Masukkan harga jetski baru: ";
     cin >> temp->ski.harga;
+    cin.ignore();
 
     cout << "\nData dengan id " << ubah << " berhasil diubah." << endl;
 }
 
 // Fibonacci Search
-int fibMonaccianSearch(nodejetski *head, int x, int n)
-{
-    nodejetski *temp = head;
+int fibMonaccianSearch(nodejetski* head, int x, int n) {
+    nodejetski* temp = head;
     int fibMMm2 = 0;
     int fibMMm1 = 1;
     int fibM = fibMMm2 + fibMMm1;
-    while (fibM < n)
-    {
+    while (fibM < n) {
         fibMMm2 = fibMMm1;
         fibMMm1 = fibM;
         fibM = fibMMm2 + fibMMm1;
     }
     int offset = -1;
-    while (fibM > 1)
-    {
+    while (fibM > 1) {
         int i = min(offset + fibMMm2, n - 1);
 
         temp = head;
-        for (int j = 0; j < i; j++)
-        {
+        for (int j = 0; j < i; j++) {
             temp = temp->next;
         }
-        if (temp->ski.id < x)
-        {
+        if (temp->ski.id < x) {
             fibM = fibMMm1;
             fibMMm1 = fibMMm2;
             fibMMm2 = fibM - fibMMm1;
             offset = i;
-        }
-        else if (temp->ski.id > x)
-        {
+        } else if (temp->ski.id > x) {
             fibM = fibMMm2;
             fibMMm1 = fibMMm1 - fibMMm2;
             fibMMm2 = fibM - fibMMm1;
-        }
-        else
+        } else {
             return i;
+        }
     }
     temp = head;
-    for (int j = 0; j < offset + 1; j++)
-    {
+    for (int j = 0; j < offset + 1; j++) {
         temp = temp->next;
     }
-    if (fibMMm1 && temp->ski.id == x)
+    if (fibMMm1 && temp->ski.id == x) {
         return offset + 1;
+    }
     return -1;
 }
 
 // Jump Search
-int findnode(nodejetski *head, int idx)
-{
-    for (int i = 0; i < idx; i++)
-    {
+int findnode(nodejetski* head, int idx) {
+    for (int i = 0; i < idx; i++) {
         head = head->next;
     }
     return head->ski.harga;
 }
 
-int jumpSearch(nodejetski *head, int x, int n)
-{
+int jumpSearch(nodejetski* head, int x, int n) {
     int step = sqrt(n);
     int prev = 0;
 
     int idx = min(step, n) - 1;
-    while (findnode(head, idx) < x)
-    {
+    while (findnode(head, idx) < x) {
         prev = step;
         step += sqrt(n);
         idx = min(step, n) - 1;
-        if (prev >= n)
-        {
+        if (prev >= n) {
             return -1;
         }
     }
-    while (findnode(head, prev) < x)
-    {
+    while (findnode(head, prev) < x) {
         prev++;
     }
-    if (findnode(head, prev) == x)
-    {
+    if (findnode(head, prev) == x) {
         return prev;
     }
     return -1;
@@ -316,93 +300,82 @@ int jumpSearch(nodejetski *head, int x, int n)
 
 // Boyer-Moore
 const int NO_OF_CHARS = 256;
-void badCharHeuristic(string str, int size, int badChar[NO_OF_CHARS])
-{
-    for (int i = 0; i < NO_OF_CHARS; i++)
-    {
+void badCharHeuristic(string str, int size, int badChar[NO_OF_CHARS]) {
+    for (int i = 0; i < NO_OF_CHARS; i++) {
         badChar[i] = -1;
     }
-    for (int i = 0; i < size; i++)
-    {
+    for (int i = 0; i < size; i++) {
         badChar[(int)str[i]] = i;
     }
 }
 
-void search(nodejetski*head, string pat)
-{
+void search(nodejetski* head, string pat) {
     int m = pat.size();
-    nodejetski *temp = head;
-    while (temp != NULL)
-    {
+    nodejetski* temp = head;
+    while (temp != NULL) {
         int n = temp->ski.merk.size();
         int badChar[NO_OF_CHARS];
         badCharHeuristic(pat, m, badChar);
         int s = 0;
 
-        while (s <= (n - m))
-        {
+        while (s <= (n - m)) {
             int j = m - 1;
-            while (j >= 0 && pat[j] == temp->ski.merk[s + j])
-            {
+            while (j >= 0 && pat[j] == temp->ski.merk[s + j]) {
                 j--;
             }
-            if (j < 0)
-            {
+            if (j < 0) {
                 cout << temp->ski.merk << endl;
                 break;
-            }
-            else
-            {
-                s += max(1, j - badChar[temp->ski.merk[s + j]]);
+            } else {
+                s += max(1, j - (s + j < n ? badChar[(unsigned char)temp->ski.merk[s + j]] : -1));
             }
         }
         temp = temp->next;
     }
 }
 
-void menuSearch(){
-    int c, x, idx;
+void menuSearch() {
+    int x, idx;
     string xs;
     int pilih;
 
-    while(true) {
-    setColor(3);
-    cout << "========================================" << endl;
-    setColor(10);
-    cout << "               CARI DATA                " << endl;
-    setColor(3);
-    cout << "========================================" << endl;
-    setColor(10);
-    cout << " 1. Id JetSki (Fibonacci Search)        " << endl;
-    cout << " 2. Harga JetSki (Jump Search)          " << endl;
-    cout << " 3. Merk JetSki (Boyer-Moore Search)    " << endl;
-    cout << " 0. Kembali                             " << endl;
-    setColor(3);
-    cout << "========================================" << endl;
-    setColor(3);
-    cout << "Masukkan pilihan anda : ";
-    setColor(6);
+    while (true) {
+        setColor(3);
+        cout << "========================================" << endl;
+        setColor(10);
+        cout << "               CARI DATA                " << endl;
+        setColor(3);
+        cout << "========================================" << endl;
+        setColor(10);
+        cout << " 1. Id JetSki (Fibonacci Search)        " << endl;
+        cout << " 2. Harga JetSki (Jump Search)          " << endl;
+        cout << " 3. Merk JetSki (Boyer-Moore Search)    " << endl;
+        cout << " 0. Kembali                             " << endl;
+        setColor(3);
+        cout << "========================================" << endl;
+        setColor(3);
+        cout << "Masukkan pilihan anda : ";
+        setColor(6);
 
-    if (cin >> noskipws >> pilih && pilih >= 0 && pilih <= 8){
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        break;
-     }else{
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Mengabaikan karakter yang tersisa dalam buffer
-        system("cls");
-        setColor(4);
-        cout << "========================================" << endl;
-        cout << "           PILIHAN TIDAK VALID          " << endl;
-        cout << "========================================" << endl;
-        sleep_for(seconds(2));
-        system("cls");
+        if (cin >> noskipws >> pilih && pilih >= 0 && pilih <= 3) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            break;
+        } else {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Mengabaikan karakter yang tersisa dalam buffer
+            system("cls");
+            setColor(4);
+            cout << "========================================" << endl;
+            cout << "           PILIHAN TIDAK VALID          " << endl;
+            cout << "========================================" << endl;
+            sleep_for(milliseconds(1000));
+            system("cls");
         }
     }
 
-    switch (pilih){
+    switch (pilih) {
         case 1:
-
             if (kosong()) {
                 cout << "Data JetSki kosong, tidak ada yang bisa dicari" << endl;
                 cout << "\n Tekan Enter untuk melanjutkan...";
@@ -415,10 +388,9 @@ void menuSearch(){
             cin >> x;
 
             idx = fibMonaccianSearch(head, x, length(head));
-            if (idx >= 0)
-            {
+            if (idx >= 0) {
                 cout << "Found at index: " << idx << endl;
-                nodejetski *current = head;
+                nodejetski* current = head;
                 for (int i = 0; i < idx; i++) {
                     current = current->next;
                 }
@@ -432,18 +404,15 @@ void menuSearch(){
                 cin.get();
                 cin.ignore();
                 break;
-            }
-            else
-            {
+            } else {
                 cout << x << " isn't present in the array" << endl;
                 cout << "\n Tekan Enter untuk melanjutkan...";
                 cin.get();
                 break;
             }
         case 2:
-
             if (kosong()) {
-                cout << "Data drone kosong, tidak ada yang bisa dicari" << endl;
+                cout << "Data jetski kosong, tidak ada yang bisa dicari" << endl;
                 cout << "\n Tekan Enter untuk melanjutkan...";
                 cin.get();
                 return;
@@ -454,10 +423,9 @@ void menuSearch(){
             cin >> x;
 
             idx = jumpSearch(head, x, length(head));
-            if (idx >= 0)
-            {
+            if (idx >= 0) {
                 cout << "Found at index: " << idx << endl;
-                nodejetski*current = head;
+                nodejetski* current = head;
                 for (int i = 0; i < idx; i++) {
                     current = current->next;
                 }
@@ -471,16 +439,13 @@ void menuSearch(){
                 cin.get();
                 cin.ignore();
                 break;
-            }
-            else
-            {
+            } else {
                 cout << x << " isn't present in the array" << endl;
                 cout << "\n Tekan Enter untuk melanjutkan...";
                 cin.get();
                 break;
             }
         case 3:
-
             if (kosong()) {
                 cout << "Data drone kosong, tidak ada yang bisa dicari" << endl;
                 cout << "\n Tekan Enter untuk melanjutkan...";
@@ -500,7 +465,7 @@ void menuSearch(){
             system("cls");
             setColor(7);
             cout << "Loading..." << endl;
-            sleep_for(seconds(2));
+            sleep_for(milliseconds(1000));
             system("cls");
             break;
         default:
@@ -582,52 +547,52 @@ void shellSort(nodejetski* head) {
     delete[] arr;
 }
 
-void menuSorting(){
+void menuSorting() {
     int pilih;
 
     while (true) {
-    setColor(3);
-    cout << "========================================" << endl;
-    setColor(10);
-    cout << "               LIHAT DATA               " << endl;
-    setColor(3);
-    cout << "========================================" << endl;
-    setColor(10);
-    cout << " 1. id JetSki (Shell Sort)              " << endl;
-    cout << " 2. Harga JetSki (Quick Sort)           " << endl;
-    cout << " 0. Kembali                             " << endl;
-    setColor(3);
-    cout << "========================================" << endl;
-    setColor(10);
-    cout << "Masukkan pilihan anda : ";
-    setColor(6);
+        setColor(3);
+        cout << "========================================" << endl;
+        setColor(10);
+        cout << "               LIHAT DATA               " << endl;
+        setColor(3);
+        cout << "========================================" << endl;
+        setColor(10);
+        cout << " 1. id JetSki (Shell Sort)              " << endl;
+        cout << " 2. Harga JetSki (Quick Sort)           " << endl;
+        cout << " 0. Kembali                             " << endl;
+        setColor(3);
+        cout << "========================================" << endl;
+        setColor(10);
+        cout << "Masukkan pilihan anda : ";
+        setColor(6);
 
-    if (cin >> noskipws >> pilih && pilih >= 0 && pilih <= 8){
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n');
-        break;
-     }else{
-        cin.clear();
-        cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Mengabaikan karakter yang tersisa dalam buffer
-        system("cls");
-        setColor(4);
-        cout << "========================================" << endl;
-        cout << "           PILIHAN TIDAK VALID          " << endl;
-        cout << "========================================" << endl;
-        sleep_for(seconds(2));
-        system("cls");
+        if (cin >> noskipws >> pilih && pilih >= 0 && pilih <= 2) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            break;
+        } else {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Mengabaikan karakter yang tersisa dalam buffer
+            system("cls");
+            setColor(4);
+            cout << "========================================" << endl;
+            cout << "           PILIHAN TIDAK VALID          " << endl;
+            cout << "========================================" << endl;
+            sleep_for(milliseconds(1000));
+            system("cls");
         }
     }
 
-    switch (pilih){
+    switch (pilih) {
         case 1:
             system("cls");
             setColor(7);
             cout << "Loading..." << endl;
-            sleep_for(seconds(2));
+            sleep_for(milliseconds(1000));
             system("cls");
             shellSort(head);
-            lihatData ();
+            lihatData();
             cout << "\n Tekan Enter untuk melanjutkan...";
             cin.get();
             break;
@@ -635,10 +600,10 @@ void menuSorting(){
             system("cls");
             setColor(7);
             cout << "Loading..." << endl;
-            sleep_for(seconds(2));
+            sleep_for(milliseconds(1000));
             system("cls");
             quickSortDesc();
-            lihatData ();
+            lihatData();
             cout << "\n Tekan Enter untuk melanjutkan...";
             cin.get();
             break;
@@ -646,19 +611,238 @@ void menuSorting(){
             system("cls");
             setColor(7);
             cout << "Loading..." << endl;
-            sleep_for(seconds(2));
+            sleep_for(milliseconds(1000));
             system("cls");
             break;
     }
 }
 
-int main() {
+void bookingJetski() {
+    system("cls");
+    penyewa user; // Struktur untuk menyimpan data penyewa
+    cout << "========================================" << endl;
+    cout << "           BOOKING JETSKI              " << endl;
+    cout << "========================================" << endl;
+
+    // Input data diri pengguna
+    cout << "Masukkan nama: ";
+    getline(cin, user.nama);
+    cout << "Masukkan nomor HP: ";
+    while (true) {
+        getline(cin, user.no_hp);
+        // Cek apakah input hanya terdiri dari angka
+        if (all_of(user.no_hp.begin(), user.no_hp.end(), ::isdigit)) {
+            break;
+        } else {
+            cout << "Input tidak valid. Masukkan hanya angka: ";
+        }
+    }
+    cout << "Masukkan alamat: ";
+    getline(cin, user.alamat);
+
+    // Tambahkan input untuk hari dan jam booking
+    string hari, jam;
+    cout << "Masukkan hari booking : ";
+    while (true) {
+        getline(cin, hari);
+        // Cek apakah input adalah salah satu hari yang valid
+        if (hari == "senin" || hari == "selasa" || hari == "rabu" ||
+            hari == "kamis" || hari == "jumat" || hari == "sabtu") {
+            break;
+        } else {
+            cout << "Input tidak valid. Masukkan hari yang valid: ";
+        }
+    }
+
+    cout << "Masukkan jam booking (format 24 jam): ";
+    while (true) {
+        getline(cin, jam);
+        // Cek apakah input hanya terdiri dari angka
+        if (all_of(jam.begin(), jam.end(), ::isdigit)) {
+            break;
+        } else {
+            cout << "Input tidak valid. Masukkan hanya angka: ";
+        }
+    }
+
+    // Simpan hari dan jam ke dalam struktur penyewa
+    user.hari = hari; // Simpan hari
+    user.jam = jam;   // Simpan jam
+
+    // Pilihan paket
+    cout << "Pilih paket yang tersedia:" << endl;
+    cout << "1. Paket Regular (30 menit)" << endl;
+    cout << "2. Paket Premium (60 menit)" << endl;
+    cout << "Masukkan pilihan paket (1/2): ";
+    int pilihanPaket;
+    cin >> pilihanPaket;
+
+    // Set paket berdasarkan pilihan
+    if (pilihanPaket == 1) {
+        user.paket = "Regular (30 menit)";
+        user.durasi = 30; // durasi dalam menit
+    } else if (pilihanPaket == 2) {
+        user.paket = "Premium (60 menit)";
+        user.durasi = 60; // durasi dalam menit
+    } else {
+        cout << "Pilihan tidak valid." << endl;
+        return;
+    }
+
+    // Tampilkan konfirmasi booking
+    cout << "Booking berhasil!" << endl;
+    cout << "Nama: " << user.nama << endl;
+    cout << "Nomor HP: " << user.no_hp << endl;
+    cout << "Alamat: " << user.alamat << endl;
+    cout << "Hari Booking: " << hari << endl;
+    cout << "Jam Booking: " << jam << endl;
+    cout << "Paket: " << user.paket << endl;
+    cout << "Durasi: " << user.durasi << " menit" << endl;
+    cout << "========================================" << endl;
+    cout << "\n Tekan Enter untuk melanjutkan...";
+    cin.get();
+
+    // Menyimpan data penyewa ke dalam antrian
+    nodepenyewa* baru = new nodepenyewa;
+    baru->user = user;
+    baru->next = nullptr;
+    baru->prev = nullptr;
+
+    if (headpenyewa == nullptr) {
+        headpenyewa = baru; // Jika antrian kosong, set head
+        lastpenyewa = baru; // Set last juga
+    } else {
+        lastpenyewa->next = baru; // Tambahkan ke akhir antrian
+        baru->prev = lastpenyewa;
+        lastpenyewa = baru; // Update last
+    }
+}
+
+void lihatAntrian() {
+    system("cls");
+    // Menampilkan antrian booking yang sudah ada
+    cout << "========================================" << endl;
+    cout << "           LIHAT ANTRIAN               " << endl;
+    cout << "========================================" << endl;
+
+    // Cek apakah ada antrian
+    if (headpenyewa == nullptr) {
+        cout << "Tidak ada antrian yang tersedia." << endl;
+    } else {
+        nodepenyewa* temp = headpenyewa;
+        int hitung = 1;
+        while (temp != nullptr) {
+            cout << "Antrian ke-" << hitung << endl;
+            cout << "Nama Penyewa: " << temp->user.nama << endl;
+            cout << "Nomor HP: " << temp->user.no_hp << endl;
+            cout << "Alamat: " << temp->user.alamat << endl;
+            cout << "Paket: " << temp->user.paket << endl;
+            cout << "Durasi: " << temp->user.durasi << " menit" << endl;
+            cout << "Hari: " << temp->user.hari << endl;
+            cout << "Jam: " << temp->user.jam << endl;
+            cout << "========================================" << endl;
+
+            temp = temp->next;
+            hitung++;
+        }
+    }
+    cout << "\n Tekan Enter untuk melanjutkan...";
+    cin.get();
+}
+
+void lihatKetersediaanJetski() {
+    setColor(3);
+    cout << "========================================" << endl;
+    setColor(10);
+    cout << "               DATA JETSKI              " << endl;
+    setColor(3);
+    cout << "========================================" << endl;
+    if (kosong()) {
+        setColor(4);
+        cout << "Data kosong, tidak ada yang bisa ditampilkan" << endl;
+        setColor(3);
+        cout << "========================================" << endl;
+        cout << "\n Tekan Enter untuk melanjutkan...";
+        cin.get();
+        return;
+    } else {
+        int hitung = 1;
+        nodejetski* temp = head;
+        while (temp != NULL) {
+            // Menampilkan hanya jetski yang statusnya "Tidak Disewa"
+            if (temp->ski.status == "Tidak Disewa") {
+                cout << "data ke-" << hitung << endl;
+                cout << "id jetski : " << temp->ski.id << endl;
+                cout << "Merk JetSki : " << temp->ski.merk << endl;
+                cout << "Harga Jetski : " << temp->ski.harga << endl;
+                cout << "Status jetSki : " << temp->ski.status << endl;
+                cout << "========================================" << endl;
+                hitung += 1;
+            }
+            temp = temp->next;
+        }
+    }
+}
+
+int user() {
+    int pilih;
+
+    while (true) {
+        system("cls");
+        setColor(3);
+        cout << "========================================" << endl;
+        setColor(10);
+        cout << "               MENU USER               " << endl;
+        setColor(3);
+        cout << "========================================" << endl;
+        setColor(10);
+        cout << "  1. Booking Jetski                    " << endl;
+        cout << "  2. Lihat Antrian                     " << endl;
+        cout << "  3. Lihat Ketersediaan Jetski         " << endl;
+        cout << "  0. Keluar                            " << endl;
+        setColor(3);
+        cout << "========================================" << endl;
+        setColor(10);
+        cout << "Enter > ";
+        setColor(6);
+
+        if (cin >> noskipws >> pilih && pilih >= 0 && pilih <= 3) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            switch (pilih) {
+                case 1:
+                    bookingJetski();
+                    break;
+                case 2:
+                    lihatAntrian();
+                    break;
+                case 3:
+                    lihatKetersediaanJetski();
+                    break;
+                case 0:
+                    return 0;
+            }
+        } else {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Mengabaikan karakter yang tersisa dalam buffer
+            system("cls");
+            setColor(4);
+            cout << "========================================" << endl;
+            cout << "           PILIHAN TIDAK VALID          " << endl;
+            cout << "========================================" << endl;
+            sleep_for(milliseconds(1000));
+            system("cls");
+        }
+    }
+}
+
+int admin() {
     int pilih;
     jetski ski;
     int nextId = 1;
 
     while (true) {
-        while (true) {
+        system("cls");
         setColor(3);
         cout << "========================================" << endl;
         setColor(10);
@@ -680,12 +864,81 @@ int main() {
         cout << "Enter > ";
         setColor(6);
 
-
-         if (cin >> noskipws >> pilih && pilih >= 0 && pilih <= 8){
+        if (cin >> noskipws >> pilih && pilih >= 0 && pilih <= 7) {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n');
-            break;
-         }else{
+            switch (pilih) {
+                case 1:
+                    system("cls");
+                    setColor(7);
+                    cout << "Loading..." << endl;
+                    sleep_for(milliseconds(1000));
+                    system("cls");
+                    tambahJetSki(ski, nextId);
+                    break;
+                case 2:
+                    system("cls");
+                    setColor(7);
+                    cout << "Loading..." << endl;
+                    sleep_for(milliseconds(1000));
+                    system("cls");
+                    menuSorting();
+                    break;
+                case 3:
+                    system("cls");
+                    setColor(7);
+                    cout << "Loading..." << endl;
+                    sleep_for(milliseconds(1000));
+                    system("cls");
+                    ubahJetSki(head);
+                    break;
+                case 4:
+                    system("cls");
+                    setColor(7);
+                    cout << "Loading..." << endl;
+                    sleep_for(seconds(2));
+                    system("cls");
+                    hapusjetSki(head);
+                    break;
+                case 5:
+                    system("cls");
+                    setColor(7);
+                    cout << "Loading..." << endl;
+                    sleep_for(seconds(2));
+                    system("cls");
+                    menuSearch();
+                    break;
+                case 6:
+                    system("cls");
+                    setColor(7);
+                    cout << "Loading..." << endl;
+                    sleep_for(seconds(2));
+                    system("cls");
+                    cout << "nanti ada menu disini" << endl;
+                    break;
+                case 7:
+                    system("cls");
+                    setColor(7);
+                    cout << "Loading..." << endl;
+                    sleep_for(seconds(2));
+                    system("cls");
+                    cout << "nanti ada menu disini" << endl;
+                    break;
+                case 0:
+                    system("cls");
+                    setColor(7);
+                    cout << "Keluar dari program..." << endl;
+                    sleep_for(seconds(2));
+                    system("cls");
+                    setColor(3);
+                    cout << "========================================" << endl;
+                    setColor(10);
+                    cout << "              TERIMA KASIH              " << endl;
+                    setColor(3);
+                    cout << "========================================" << endl;
+                    return 0;
+            }
+        } else {
             cin.clear();
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Mengabaikan karakter yang tersisa dalam buffer
             system("cls");
@@ -693,82 +946,56 @@ int main() {
             cout << "========================================" << endl;
             cout << "           PILIHAN TIDAK VALID          " << endl;
             cout << "========================================" << endl;
-            sleep_for(seconds(2));
+            sleep_for(milliseconds(1000));
             system("cls");
-            }
         }
+    }
+}
 
-        switch (pilih)
-        {
-        case 1:
+int main() {
+    int pilih;
+    while (true) {
+        system("cls");
+        setColor(3);
+        cout << "========================================" << endl;
+        setColor(10);
+        cout << "               MENU UTAMA               " << endl;
+        setColor(3);
+        cout << "========================================" << endl;
+        setColor(10);
+        cout << "  1. Admin                              " << endl;
+        cout << "  2. User                               " << endl;
+        cout << "  0. Keluar                             " << endl;
+        setColor(3);
+        cout << "========================================" << endl;
+        setColor(10);
+        cout << "Enter > ";
+        setColor(6);
+
+        if (cin >> noskipws >> pilih && pilih >= 0 && pilih <= 2) {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n');
+            switch (pilih) {
+                case 1:
+                    admin(); // Panggil fungsi admin
+                    break;
+                case 2:
+                    user(); // Panggil fungsi user
+                    break;
+                case 0:
+                    cout << "Keluar dari program..." << endl;
+                    return 0;
+            }
+        } else {
+            cin.clear();
+            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Mengabaikan karakter yang tersisa dalam buffer
             system("cls");
-            setColor(7);
-            cout << "Loading..." << endl;
-            sleep_for(seconds(2));
-            system("cls");
-            tambahJetSki(ski, nextId);
-            break;
-        case 2:
-            system("cls");
-            setColor(7);
-            cout << "Loading..." << endl;
-            sleep_for(seconds(2));
-            system("cls");
-            menuSorting();
-            break;
-        case 3:
-            system("cls");
-            setColor(7);
-            cout << "Loading..." << endl;
-            sleep_for(seconds(2));
-            system("cls");
-            ubahJetSki(head);
-            break;
-        case 4:
-            system("cls");
-            setColor(7);
-            cout << "Loading..." << endl;
-            sleep_for(seconds(2));
-            system("cls");
-            hapusjetSki(head);
-            break;
-        case 5:
-            system("cls");
-            setColor(7);
-            cout << "Loading..." << endl;
-            sleep_for(seconds(2));
-            system("cls");
-            menuSearch();
-            break;
-        case 6:
-            system("cls");
-            setColor(7);
-            cout << "Loading..." << endl;
-            sleep_for(seconds(2));
-            system("cls");
-            cout << "nanti ada menu disini" << endl;
-            break;
-        case 7:
-            system("cls");
-            setColor(7);
-            cout << "Loading..." << endl;
-            sleep_for(seconds(2));
-            system("cls");
-            cout << "nanti ada menu disini" << endl;
-            break;
-        case 0:
-            system("cls");
-            setColor(7);
-            cout << "Keluar dari program..." << endl;
-            sleep_for(seconds(2));
-            system("cls");
-            setColor(3);
+            setColor(4);
             cout << "========================================" << endl;
-            setColor(10);
-            cout << "              TERIMA KASIH              " << endl;
-            setColor(3);
+            cout << "           PILIHAN TIDAK VALID          " << endl;
             cout << "========================================" << endl;
-            return 0;
+            sleep_for(milliseconds(1000));
+            system("cls");
         }
     }
 }
