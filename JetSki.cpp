@@ -121,7 +121,7 @@ int tambahJetSki(jetski ski, int& nextId) {
     getline(cin, ski.merk);
     setColor(10);
     cout << "Masukkan harga jetski : ";
-    setColor(6);    cin >> ski.harga;
+    setColor(6);    cin >> ski.harga;
     cin.clear();
 
     //set status jetski secara statis
@@ -165,7 +165,7 @@ void hapusjetSki(nodejetski*& head) {
     cout << "========================================" << endl;
     setColor(10);
     cout << "Masukkan merk jetski yang ingin dihapus : ";
-    setColor(6);    cin >> id_temp;
+    setColor(6);    cin >> id_temp;
 
     if (temp->ski.id == id_temp) {
         head = temp->next;
@@ -218,7 +218,7 @@ void ubahJetSki(nodejetski* head) {
 
     setColor(3);
     cout << "========================================" << endl;
-    setColor(10);    cout << "            UBAH DATA JETSKI            " << endl;
+    setColor(10);    cout << "            UBAH DATA JETSKI            " << endl;
     setColor(3);
     cout << "========================================" << endl;
 
@@ -658,16 +658,19 @@ void menuSorting() {
     }
 }
 
+void lihatKetersediaanJetski(); // Deklarasi fungsi
+
 void bookingJetski() {
     system("cls");
     penyewa user; // Struktur untuk menyimpan data penyewa
-    setColor(3);    cout << "========================================" << endl;
+    setColor(3);    
+    cout << "========================================" << endl;
     setColor(10);
     cout << "           BOOKING JETSKI               " << endl;
     setColor(3);
     cout << "========================================" << endl;
 
-    if (kosong) {
+    if (kosong()) {
         setColor(3);
         cout << "========================================" << endl;
         setColor(4);
@@ -675,6 +678,42 @@ void bookingJetski() {
         setColor(3);
         cout << "========================================" << endl;
         setColor(10);
+        cout << "\n Tekan Enter untuk melanjutkan...";
+        cin.get();
+        return;
+    }
+
+    // Tampilkan data jetski untuk dipilih
+    lihatKetersediaanJetski(); // Menampilkan semua jetski yang tersedia
+    int id_jetski; // Variabel untuk menyimpan ID jetski yang dipilih
+    setColor(10);
+    cout << "Masukkan ID Jetski yang ingin dipesan: ";
+    setColor(6);
+    cin >> id_jetski;
+    cin.ignore(); // Mengabaikan newline setelah input
+
+    // Mencari jetski berdasarkan ID
+    nodejetski* temp = head;
+    while (temp != nullptr) {
+        if (temp->ski.id == id_jetski) {
+            // Cek apakah jetski sudah disewa
+            if (temp->ski.status == "Disewa") {
+                setColor(4);
+                cout << "Jetski dengan ID " << id_jetski << " sudah disewa." << endl;
+                cout << "\n Tekan Enter untuk melanjutkan...";
+                cin.get();
+                return;
+            }
+            // Jika jetski ditemukan dan tidak disewa, ubah statusnya menjadi "Disewa"
+            temp->ski.status = "Disewa";
+            break;
+        }
+        temp = temp->next;
+    }
+
+    if (temp == nullptr) {
+        setColor(4);
+        cout << "ID Jetski tidak ditemukan." << endl;
         cout << "\n Tekan Enter untuk melanjutkan...";
         cin.get();
         return;
@@ -774,6 +813,44 @@ void bookingJetski() {
     }
 }
 
+// Definisi fungsi lihatKetersediaanJetski
+void lihatKetersediaanJetski() {
+    setColor(3);
+    cout << "========================================" << endl;
+    setColor(10);
+    cout << "               DATA JETSKI              " << endl;
+    setColor(3);
+    cout << "========================================" << endl;
+    if (kosong()) {
+        system("cls");
+        setColor(3);
+        cout << "========================================" << endl;
+        setColor(4);
+        cout << "Data kosong, tidak ada yang bisa ditampilkan" << endl;
+        setColor(3);
+        cout << "========================================" << endl;
+        cout << "\n Tekan Enter untuk melanjutkan...";
+        cin.get();
+        return;
+    } else {
+        int hitung = 1;
+        nodejetski* temp = head;
+        while (temp != NULL) {
+            // Menampilkan hanya jetski yang statusnya "Tidak Disewa"
+            if (temp->ski.status == "Tidak Disewa") {
+                cout << "data ke-" << hitung << endl;
+                cout << "id jetski : " << temp->ski.id << endl;
+                cout << "Merk JetSki : " << temp->ski.merk << endl;
+                cout << "Harga Jetski : " << temp->ski.harga << endl;
+                cout << "Status jetSki : " << temp->ski.status << endl;
+                cout << "========================================" << endl;
+                hitung += 1;
+            }
+            temp = temp->next;
+        }
+    }
+}
+
 void lihatAntrian() {
     system("cls");
     // Menampilkan antrian booking yang sudah ada
@@ -811,43 +888,6 @@ void lihatAntrian() {
     setColor(10);
     cout << "\n Tekan Enter untuk melanjutkan...";
     cin.get();
-}
-
-void lihatKetersediaanJetski() {
-    setColor(3);
-    cout << "========================================" << endl;
-    setColor(10);
-    cout << "               DATA JETSKI              " << endl;
-    setColor(3);
-    cout << "========================================" << endl;
-    if (kosong()) {
-        system("cls");
-        setColor(3);
-        cout << "========================================" << endl;
-        setColor(4);
-        cout << "Data kosong, tidak ada yang bisa ditampilkan" << endl;
-        setColor(3);
-        cout << "========================================" << endl;
-        cout << "\n Tekan Enter untuk melanjutkan...";
-        cin.get();
-        return;
-    } else {
-        int hitung = 1;
-        nodejetski* temp = head;
-        while (temp != NULL) {
-            // Menampilkan hanya jetski yang statusnya "Tidak Disewa"
-            if (temp->ski.status == "Tidak Disewa") {
-                cout << "data ke-" << hitung << endl;
-                cout << "id jetski : " << temp->ski.id << endl;
-                cout << "Merk JetSki : " << temp->ski.merk << endl;
-                cout << "Harga Jetski : " << temp->ski.harga << endl;
-                cout << "Status jetSki : " << temp->ski.status << endl;
-                cout << "========================================" << endl;
-                hitung += 1;
-            }
-            temp = temp->next;
-        }
-    }
 }
 
 int user() {
@@ -901,6 +941,8 @@ int user() {
         }
     }
 }
+
+void konfirmasiPengembalian(); // Deklarasi fungsi
 
 int admin() {
     int pilih;
@@ -988,7 +1030,7 @@ int admin() {
                     cout << "Loading..." << endl;
                     sleep_for(seconds(2));
                     system("cls");
-                    cout << "nanti ada menu disini" << endl;
+                    konfirmasiPengembalian();
                     break;
                 case 0:
                     system("cls");
@@ -1016,6 +1058,45 @@ int admin() {
             system("cls");
         }
     }
+}
+
+void konfirmasiPengembalian() {
+    if (headpenyewa == nullptr) {
+        setColor(4);
+        cout << "Tidak ada antrian untuk dilayani." << endl;
+        cout << "\n Tekan Enter untuk melanjutkan...";
+        cin.get();
+        return;
+    }
+
+    // Ambil penyewa dari head antrian
+    nodepenyewa* temp = headpenyewa;
+
+    // Mencari jetski yang statusnya perlu diubah
+    nodejetski* jetskiTemp = head;
+    while (jetskiTemp != nullptr) {
+        if (jetskiTemp->ski.merk == temp->user.merk) { // Asumsi merk digunakan untuk mencocokkan
+            jetskiTemp->ski.status = "Tidak Disewa"; // Ubah status jetski menjadi "Tidak Disewa"
+            break;
+        }
+        jetskiTemp = jetskiTemp->next;
+    }
+
+    // Menghapus head dari antrian
+    headpenyewa = headpenyewa->next;
+    if (headpenyewa != nullptr) {
+        headpenyewa->prev = nullptr; // Update prev dari head baru
+    } else {
+        lastpenyewa = nullptr; // Jika antrian kosong, set last menjadi nullptr
+    }
+
+    // Menghapus node penyewa yang sudah dilayani
+    delete temp;
+
+    setColor(10);
+    cout << "Penyewa berhasil dilayani dan status jetski diubah menjadi 'Tidak Disewa'." << endl;
+    cout << "\n Tekan Enter untuk melanjutkan...";
+    cin.get();
 }
 
 int main() {
