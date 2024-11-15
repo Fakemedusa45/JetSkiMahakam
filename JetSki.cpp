@@ -255,6 +255,7 @@ void hapusjetSki(nodejetski *&head)
         setColor(10);
         cout << "\n Tekan Enter untuk melanjutkan...";
         cin.get();
+        cin.ignore();
         return;
     }
 
@@ -362,6 +363,8 @@ void ubahJetSki(nodejetski *head)
     cout << "Data dengan id " << ubah << " berhasil diubah." << endl;
     setColor(3);
     cout << "========================================" << endl;
+    cout << "\n Tekan Enter untuk melanjutkan...";
+    cin.get();
 }
 
 // Fibonacci Search
@@ -488,7 +491,6 @@ void search(nodejetski *head, string pat)
             }
             if (j < 0)
             {
-                cout << temp->ski.merk << endl;
                 setColor(3);
                 cout << "========================================" << endl;
                 setColor(10);
@@ -546,7 +548,7 @@ void menuSearch()
         cout << " 0. Kembali                             " << endl;
         setColor(3);
         cout << "========================================" << endl;
-        setColor(3);
+        setColor(10);
         cout << "Masukkan pilihan anda : ";
         setColor(6);
 
@@ -592,6 +594,7 @@ void menuSearch()
         cout << "Cari Id JetSki: ";
         setColor(6);
         cin >> x;
+        cin.clear();
 
         idx = fibMonaccianSearch(head, x, length(head));
         if (idx >= 0)
@@ -639,6 +642,7 @@ void menuSearch()
             setColor(10);
             cout << "\n Tekan Enter untuk melanjutkan...";
             cin.get();
+            cin.ignore();
             break;
         }
     case 2:
@@ -661,6 +665,7 @@ void menuSearch()
         cout << "Cari harga JetSki : ";
         setColor(6);
         cin >> x;
+        cin.clear();
 
         idx = jumpSearch(head, x, length(head));
         if (idx >= 0)
@@ -708,6 +713,7 @@ void menuSearch()
             setColor(10);
             cout << "\n Tekan Enter untuk melanjutkan...";
             cin.get();
+            cin.ignore();
             break;
         }
     case 3:
@@ -727,13 +733,11 @@ void menuSearch()
 
         lihatData();
         setColor(10);
-        cout << "Cari harga sewa: ";
+        cout << "Cari merk jetski : ";
         setColor(10);
         cin >> xs;
 
         search(head, xs);
-        cout << "\n Tekan Enter untuk melanjutkan...";
-        cin.get();
         break;
     case 0:
         system("cls");
@@ -982,8 +986,11 @@ void lihatAntrian()
 {
     system("cls");
     // Menampilkan antrian booking yang sudah ada
+    setColor(3);
     cout << "========================================" << endl;
-    cout << "           LIHAT ANTRIAN               " << endl;
+    setColor(10);
+    cout << "           LIHAT ANTRIAN                " << endl;
+    setColor(3);
     cout << "========================================" << endl;
 
     // Cek apakah ada antrian
@@ -1283,6 +1290,7 @@ void bookingJetski()
     setColor(10);
     cout << "\n Tekan Enter untuk melanjutkan...";
     cin.get();
+    cin.ignore();
 
     // Menyimpan data penyewa ke dalam antrian
     nodepenyewa *baru = new nodepenyewa;
@@ -1368,8 +1376,12 @@ void konfirmasiPengembalian()
 {
     if (headpenyewa == nullptr)
     {
+        setColor(3);
+        cout << "========================================" << endl;
         setColor(4);
-        cout << "Tidak ada antrian untuk dilayani." << endl;
+        cout << "     Tidak ada jetski yang disewa.      " << endl;
+        setColor(3);        cout << "========================================" << endl;
+        setColor(10);
         cout << "\n Tekan Enter untuk melanjutkan...";
         cin.get();
         return;
@@ -1404,8 +1416,13 @@ void konfirmasiPengembalian()
     // Menghapus node penyewa yang sudah dilayani
     delete temp;
 
+    setColor(3);
+    cout << "========================================" << endl;
     setColor(10);
     cout << "Jetski telah berhasil dikonfirmasi pengembaliannya" << endl;
+    setColor(3);
+    cout << "========================================" << endl;
+    setColor(10);
     cout << "\n Tekan Enter untuk melanjutkan...";
     cin.get();
 }
