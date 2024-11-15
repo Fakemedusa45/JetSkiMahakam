@@ -143,6 +143,26 @@ int tambahJetSki(jetski ski, int &nextId)
     cout << "Masukkan merk jetski : ";
     setColor(6);
     getline(cin, ski.merk);
+
+    nodejetski *temp = head;
+    while (temp != NULL){
+        if(temp->ski.merk == ski.merk){
+            setColor(3);
+            cout << "========================================" << endl;
+            setColor(4);
+            cout << "             Merk sudah ada             " << endl;
+            setColor(3);
+            cout << "========================================" << endl;
+            setColor(10);
+            cout << "\n Tekan Enter untuk melanjutkan...";
+            cin.get();
+            return 0;
+        } else {
+            break;
+        }
+        temp = temp->next;
+    }
+
     setColor(10);
     cout << "Masukkan harga jetski : ";
     setColor(6);
@@ -152,12 +172,11 @@ int tambahJetSki(jetski ski, int &nextId)
             cin.clear(); // Menghapus flag kesalahan
             cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Mengabaikan karakter yang tersisa dalam buffer
             setColor(4);
-            cout << "Input tidak valid. Masukkan hanya angka: ";
+            cout << "Input tidak valid. Masukkan hanya angka!";
             setColor(10);
             cout << "Masukkan harga jetski : ";
             setColor(6);
         } else {
-            cin.ignore(); // Mengabaikan newline setelah input
             break; // Keluar dari loop jika input valid
         }
     }
@@ -184,12 +203,12 @@ int tambahJetSki(jetski ski, int &nextId)
         last = baru;
     }
     cin.ignore();
-    
+
     // Menambahkan prompt untuk melanjutkan
     setColor(10);
     cout << "\n Tekan Enter untuk melanjutkan...";
     cin.get();
-    
+
     return 0;
 }
 
@@ -233,6 +252,7 @@ void hapusjetSki(nodejetski *&head)
         setColor(3);
         cout << "========================================" << endl;
         cin.ignore();
+        setColor(10);
         cout << "\n Tekan Enter untuk melanjutkan...";
         cin.get();
         return;
@@ -274,7 +294,9 @@ void hapusjetSki(nodejetski *&head)
     cout << "Data dengan id " << id_temp << " berhasil dihapus!" << endl;
     setColor(3);
     cout << "========================================" << endl;
-    cin.ignore();
+    setColor(10);
+    cout << "\n Tekan Enter untuk melanjutkan...";
+    cin.get();
     return;
 }
 
@@ -320,6 +342,7 @@ void ubahJetSki(nodejetski *head)
         setColor(10);
         cout << "\n Tekan Enter untuk melanjutkan...";
         cin.get();
+        cin.ignore();
         return;
     }
 
@@ -1193,7 +1216,7 @@ void bookingJetski()
     setColor(10);
     cout << "Masukkan pilihan paket (1/2): ";
     int pilihanPaket;
-    
+
     while (true) {
         setColor(6);
         cin >> pilihanPaket;
@@ -1382,7 +1405,7 @@ void konfirmasiPengembalian()
     delete temp;
 
     setColor(10);
-    cout << "Penyewa berhasil dilayani dan status jetski diubah menjadi 'Tidak Disewa'." << endl;
+    cout << "Jetski telah berhasil dikonfirmasi pengembaliannya" << endl;
     cout << "\n Tekan Enter untuk melanjutkan...";
     cin.get();
 }
@@ -1391,11 +1414,21 @@ bool login()
 {
     system("cls");
     string username, password;
+
+    setColor(3);
+    cout << "========================================" << endl;
+    setColor(10);
+    cout << "               LOGIN ADMIN              " << endl;
+    setColor(3);
+    cout << "========================================" << endl;
+    setColor(10);
     cout << "Masukkan username: ";
+    setColor(6);
     cin >> username;
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
+    setColor(10);
     cout << "Masukkan password: ";
-    cin >> password;
+    setColor(6);    cin >> password;
     cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Mengabaikan newline setelah input password
 
     return (username == "admin" && password == "admin");
@@ -1406,6 +1439,7 @@ int admin()
     if (!login())
     { // Memanggil fungsi login sebelum masuk ke menu admin
         cout << "Login gagal! Username atau password salah." << endl;
+        sleep_for(milliseconds(1000));
         return 0; // Kembali ke menu utama jika login gagal
     }
 
@@ -1429,7 +1463,7 @@ int admin()
         cout << "  4. Hapus JetSki                       " << endl;
         cout << "  5. Cari JetSki                        " << endl;
         cout << "  6. Lihat Antrian JetSki               " << endl;
-        cout << "  7. Layani Antrian JetSki              " << endl;
+        cout << "  7. Konfirmasi pengembalian JetSki     " << endl;
         cout << "  0. Keluar                             " << endl;
         setColor(3);
         cout << "========================================" << endl;
